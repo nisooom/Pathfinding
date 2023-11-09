@@ -17,6 +17,7 @@
 
 #define GAP (WIDTH/ROWS)
 #define ASTAR_IMPLEMENTATION
+#define LINKED_LIST_IMPLEMENTATION
 
 //-----------------------------------------------
 //  STRUCTS AND ENUMS
@@ -39,8 +40,8 @@ typedef struct Tile {
     struct Tile *neighbours;
     int totalRows;
     enum STATE state;
-    struct Tile* parent;
-    int g,h,f;
+    struct Tile *parent;
+    int g, h, f;
 } Tile;
 
 //-----------------------------------------------
@@ -52,11 +53,13 @@ Tile tiles[ROWS][ROWS];
 Color baseTileColor;
 Vector2 startPos, endPos;
 
+Tile NULL_TILE = {0};
+
 //-----------------------------------------------
 //  Helper Functions
 //-----------------------------------------------
 
-Vector2 getRC(Tile tile){
+Vector2 getRC(Tile tile) {
     Vector2 rc;
     rc.x = tile.row;
     rc.y = tile.col;
@@ -64,8 +67,8 @@ Vector2 getRC(Tile tile){
     return rc;
 }
 
-Tile* getTile(Vector2 pos){
-    return &tiles[(int)pos.x][(int)pos.y];
+Tile *getTile(Vector2 pos) {
+    return &tiles[(int) pos.x][(int) pos.y];
 }
 
 Vector2 getPos() {
@@ -77,48 +80,120 @@ Vector2 getPos() {
     return pos;
 }
 
+//NOTE: NOT USED YET---------------------------------------
+//  PRIORITY QUEUE BY LINKED LIST IMPLEMENTATION
+//---------------------------------------------------------
+
+#ifdef LINKED_LIST_IMPLEMENTATION
+
+#include <stdlib.h>
+
+struct NODE {
+    Tile* tile;
+    int data, priority, value;
+    struct NODE *next;
+} typedef NODE;
+
+NODE *head = 0, *newNode;
+
+void display() {
+    if (head != 0) {
+        NODE *current = head;
+        printf("List: ");
+        while (current != 0) {
+            printf("%d ", current->data);
+            current = current->next;
+        }
+        printf("\n");
+    }
+}
+
+void createNode(Tile* tile) {
+    newNode = (NODE *) malloc(sizeof(NODE));
+    newNode->tile = tile;
+    newNode->next = 0;
+    newNode->data = tile->g;
+    newNode->value = tile->h;
+    newNode->priority = tile->f;
+}
+
+void addNode(Tile* tile, NODE* node) {
+    createNode(tile);
+    NODE *current = head;
+
+    if (head == NULL || current->data < (head)->data) {
+        newNode->next = head;
+        head = newNode;
+    } else {
+        while (current->next != NULL && current->next->data < current->data) {
+            current = current->next;
+        }
+        newNode->next = current->next;
+        current->next = newNode;
+    }
+}
+
+NODE pop() {
+
+    NODE *current = head, *prev = 0;
+    while (current->next != 0) {
+        prev = current;
+        current = current->next;
+    }
+    printf("\nRemoved Element: %d\n", current->data);
+    prev->next = 0;
+
+    return *current;
+
+}
+
+#endif
 
 //---------------------------------------------------------
 //  A* IMPLEMENTATION
 //---------------------------------------------------------
 
 #ifdef ASTAR_IMPLEMENTATION
+
 #include <stdlib.h>
 #include <stdbool.h>
 
 
 // Helper function to calculate the heuristic cost (e.g., Manhattan distance)
-int heuristic(Tile* start, Tile* goal) {
+int heuristic(Tile *start, Tile *goal) {
     return abs(start->row - goal->row) + abs(start->col - goal->col);
 }
 
-void findNeighbours(Tile* tile){
+void findNeighbours(Tile *tile) {
     int tC = tile->col;
     int tR = tile->row;
 
+    tile->neighbours = malloc(4 * sizeof(Tile));
+    tile->neighbours[0] = tiles[tR - 1][tC];
+    tile->neighbours[1] = tiles[tR + 1][tC];
+    tile->neighbours[2] = tiles[tR][tC - 1];
+    tile->neighbours[3] = tiles[tR][tC + 1];
 
-#if ALLOW_DIAGONALS
-
-    tile->neighbours = malloc(6 * sizeof (Tile));
-    tile->neighbours[0] = tiles[tR-1][tC];
-    tile->neighbours[1] = tiles[tR+1][tC];
-    tile->neighbours[2] = tiles[tR][tC-1];
-    tile->neighbours[3] = tiles[tR][tC+1];
-    tile->neighbours[0] = tiles[tR-1][tC-1];
-    tile->neighbours[0] = tiles[tR+1][tC+1];
-
-#else
-    tile->neighbours = malloc(4 * sizeof (Tile));
-    tile->neighbours[0] = tiles[tR-1][tC];
-    tile->neighbours[1] = tiles[tR+1][tC];
-    tile->neighbours[2] = tiles[tR][tC-1];
-    tile->neighbours[3] = tiles[tR][tC+1];
-
-#endif
 }
 
 // A* algorithm
-void astar(Tile* start, Tile* goal) {
+void astar(Tile *start, Tile *goal) {
+
+    for(int i =0; i < ROWS; ++i)
+        for (int j = 0; j < ROWS; ++j)
+            findNeighbours(&tiles[i][j]);
+
+    Tile closedSet[ROWS*ROWS];
+    int closedIdx = 0;
+
+
+    NODE* minNeighbour = 0;
+
+
+    for (int i = 0; i < 4; ++i) {
+
+    }
+
 
 }
 
@@ -146,9 +221,13 @@ void createGrid() {
             newTile.color = baseTileColor;
             newTile.state = OPEN;
             newTile.totalRows = ROWS;
+            newTile.parent = NULL;
+            newTile.f = __INT_MAX__;
+            newTile.g = __INT_MAX__;
+            newTile.h = 0;
 
             tiles[i][j] = newTile;
-
+//            openSet[i][j] = newTile;
         }
     }
 }
@@ -217,11 +296,11 @@ void changeState(enum STATE state) {
 
 void algorithm() {
 
-    Tile* end;
-    Tile* start;
-    start = &tiles[(int)startPos.x][(int)startPos.y];
+    Tile *end;
+    Tile *start;
+    start = &tiles[(int) startPos.x][(int) startPos.y];
 
-    end = &tiles[(int)endPos.x][(int)endPos.y];
+    end = &tiles[(int) endPos.x][(int) endPos.y];
 
     astar(start, end);
 
@@ -261,71 +340,5 @@ int main(void) {
 }
 
 
-//NOTE: NOT USED YET---------------------------------------
-//  PRIORITY QUEUE BY LINKED LIST IMPLEMENTATION
-//---------------------------------------------------------
 
-#ifdef LINKED_LIST_IMPLEMENTATION
-
-#include <stdio.h>
-#include <stdlib.h>
-
-struct NODE {
-    int data, priority, value;
-    struct NODE *next;
-} typedef NODE;
-
-NODE *head = 0, *newNode;
-
-void display() {
-    if (head != 0) {
-        NODE *current = head;
-        printf("List: ");
-        while (current != 0) {
-            printf("%d ", current->data);
-            current = current->next;
-        }
-        printf("\n");
-    }
-}
-
-void createNode(int priority, int data, int val) {
-    newNode = (NODE *) malloc(sizeof(NODE));
-    newNode->next = 0;
-    newNode->data = data;
-    newNode->value = val;
-    newNode->priority = priority;
-}
-
-void addNode(int priority, int data, int val) {
-    createNode(priority, data, val);
-    NODE *current = head;
-
-    if (head == NULL || data < (head)->data) {
-        newNode->next = head;
-        head = newNode;
-    } else {
-        while (current->next != NULL && current->next->data < data) {
-            current = current->next;
-        }
-        newNode->next = current->next;
-        current->next = newNode;
-    }
-}
-
-NODE pop() {
-
-    NODE *current = head, *prev = 0;
-    while (current->next != 0) {
-        prev = current;
-        current = current->next;
-    }
-    printf("\nRemoved Element: %d\n", current->data);
-    prev->next = 0;
-
-    return *current;
-
-}
-
-#endif
 
