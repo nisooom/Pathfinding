@@ -1,0 +1,27 @@
+# ninja log v5
+40	370	7212426504904320	_deps/raylib-build/raylib/CMakeFiles/raylib.dir/utils.c.obj	ad1cee6f536d8514
+27	525	7212426504954319	CMakeFiles/Pathfinding.dir/main.c.obj	7c817531eda583eb
+11	636	7212426507710175	_deps/raylib-build/raylib/CMakeFiles/raylib.dir/rshapes.c.obj	83a27ea711220e03
+16	1660	7212426517277908	_deps/raylib-build/raylib/CMakeFiles/raylib.dir/rtext.c.obj	7fdde5c333631ae1
+46	2628	7212426527530828	_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/context.c.obj	c06381a281929cf4
+21	2643	7212426527530828	_deps/raylib-build/raylib/CMakeFiles/raylib.dir/rtextures.c.obj	6b41abeca0be9809
+57	2882	7212426529231453	_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/init.c.obj	b7faf950424c55ef
+1	2955	7212426530842171	_deps/raylib-build/raylib/CMakeFiles/raylib.dir/rcore.c.obj	a8a548932fc95cd4
+525	3185	7212426533133010	_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/vulkan.c.obj	957855dc511edb79
+373	3307	7212426534298358	_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/win32_init.c.obj	771446fec0730dda
+637	3372	7212426535103599	_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/input.c.obj	fde0b6dbae8499a8
+6	3844	7212426539730469	_deps/raylib-build/raylib/CMakeFiles/raylib.dir/rmodels.c.obj	c732399c7aab25fc
+1661	4982	7212426550703909	_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/monitor.c.obj	7612de497fff7751
+2643	5363	7212426554654937	_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/osmesa_context.c.obj	e7c65aa97d0a5649
+2882	5397	7212426555330113	_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/win32_joystick.c.obj	b8e81aac641afc50
+2632	5427	7212426555440122	_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/window.c.obj	f7300026b65c9bbf
+2956	5565	7212426557030750	_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/win32_monitor.c.obj	d8872313a3dcde28
+3185	5879	7212426560213605	_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/egl_context.c.obj	f8a23f3afae6d472
+3308	5935	7212426560804598	_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/win32_thread.c.obj	f742d9a2d1e53cfd
+3372	6159	7212426563055103	_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/win32_window.c.obj	1d43c2e128fefd3b
+3844	6269	7212426564168799	_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/wgl_context.c.obj	37072aea348079fa
+4982	6691	7212426568404970	_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/win32_time.c.obj	b402f77c3dca518d
+6691	7079	7212426572290212	_deps/raylib-build/raylib/external/glfw/src/libglfw3.a	e0e65fc6f5cb5ca2
+33	8689	7212426588324586	_deps/raylib-build/raylib/CMakeFiles/raylib.dir/raudio.c.obj	7a88f8ec591f0ef7
+8689	8835	7212426589858918	_deps/raylib-build/raylib/libraylib.a	ae3ade7fac312746
+8835	9168	7212426593130469	Pathfinding.exe	3f57c86f3e766145
