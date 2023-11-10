@@ -8,8 +8,8 @@
 //  CHANGEABLE VARIABLES
 //-----------------------------------------------
 
-#define WIDTH 1080
-#define ROWS 40
+#define WIDTH 720
+#define ROWS 30
 #define FPS 60
 
 //-----------------------------------------------
@@ -304,7 +304,7 @@ int main(void) {
         BeginDrawing();
         drawTiles();
 
-        if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT) || IsKeyPressed(KEY_B)) changeState(BARRIER);
+        if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT) || IsKeyDown(KEY_B)) changeState(BARRIER);
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) changeState(UNVISITED);
 
         if ((!startFlag) && (IsKeyPressed(KEY_S))) changeState(START);
