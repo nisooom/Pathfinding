@@ -8,9 +8,9 @@
 //  CHANGEABLE VARIABLES
 //-----------------------------------------------
 
-#define WIDTH 800
-#define ROWS 25
-
+#define WIDTH 1080
+#define ROWS 40
+#define FPS 60
 
 //-----------------------------------------------
 //  FIXED VARIABLES
@@ -19,14 +19,11 @@
 #define GAP (WIDTH/ROWS)
 #define ASTAR_IMPLEMENTATION
 
-
 //-----------------------------------------------
 //  STRUCTS AND ENUMS
 //-----------------------------------------------
 
 enum STATE {
-    CLOSED,
-    OPEN,
     BARRIER,
     START,
     DESTINATION,
@@ -60,11 +57,9 @@ Tile tiles[ROWS][ROWS];
 Color baseTileColor;
 Vector2 startPos, endPos;
 
-
 //-----------------------------------------------
 //  Helper Functions
 //-----------------------------------------------
-
 
 Tile* getTile(Vector2 pos) {
     return &tiles[(int) pos.x][(int) pos.y];
@@ -77,7 +72,6 @@ Vector2 getMousePos() {
     pos.y = mousePos.y / GAP;
     return pos;
 }
-
 
 void createGrid() {
 
@@ -294,25 +288,18 @@ void astar(Node* start, Node* goal) {
 
 void algorithm() {
 
-    Node* start, *end;
-
-    start = createNode(startPos.x, startPos.y, false);
-    end = createNode(endPos.x, endPos.y, false);
-
-    astar(start, end);
+    astar(createNode(startPos.x, startPos.y, false), createNode(endPos.x, endPos.y, false));
 
 }
 
 int main(void) {
-    InitWindow(WIDTH, WIDTH, "Pathfinding Algorithms");
-    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
+
+    InitWindow(WIDTH, WIDTH, "A* Pathfinding Algorithm");
+    SetTargetFPS(FPS);
 
     baseTileColor = GetColor(232020);
     createGrid();
-    while (!WindowShouldClose())    // Detect window close button or ESC key
-    {
-        // Begin Variables
-
+    while (!WindowShouldClose()){
 
         BeginDrawing();
         drawTiles();
