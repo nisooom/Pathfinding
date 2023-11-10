@@ -18,7 +18,7 @@
 
 #define GAP (WIDTH/ROWS)
 #define ASTAR_IMPLEMENTATION
-#define LINKED_LIST_IMPLEMENTATION
+
 
 //-----------------------------------------------
 //  STRUCTS AND ENUMS
@@ -44,6 +44,13 @@ typedef struct Tile {
     int g, h, f;
 } Tile;
 
+typedef struct {
+    int x, y;
+    int g, h, f;
+    bool obstacle;
+    struct Node* parent;
+} Node;
+
 //-----------------------------------------------
 //  GLOBAL VARIABLES
 //-----------------------------------------------
@@ -53,30 +60,21 @@ Tile tiles[ROWS][ROWS];
 Color baseTileColor;
 Vector2 startPos, endPos;
 
-Tile NULL_TILE = {0};
 
 //-----------------------------------------------
 //  Helper Functions
 //-----------------------------------------------
 
-Vector2 getRC(Tile tile) {
-    Vector2 rc;
-    rc.x = tile.row;
-    rc.y = tile.col;
-    return rc;
-
-}
 
 Tile* getTile(Vector2 pos) {
     return &tiles[(int) pos.x][(int) pos.y];
 }
 
-Vector2 getPos() {
+Vector2 getMousePos() {
     Vector2 pos;
     Vector2 mousePos = GetMousePosition();
     pos.x = mousePos.x / GAP;
     pos.y = mousePos.y / GAP;
-
     return pos;
 }
 
@@ -133,7 +131,7 @@ void drawTiles() {
 }
 
 void changeState(enum STATE state) {
-    Vector2 pos = getPos();
+    Vector2 pos = getMousePos();
     int row = pos.x;
     int col = pos.y;
 
@@ -150,7 +148,7 @@ void changeState(enum STATE state) {
         case UNVISITED:
             if (curr.state == DESTINATION) endFlag = !endFlag;
             if (curr.state == START) startFlag = !startFlag;
-            curr.state = TILE;
+            curr.state = UNVISITED;
             curr.color = baseTileColor;
             break;
         case START:
@@ -170,237 +168,136 @@ void changeState(enum STATE state) {
     tiles[row][col] = curr;
 }
 
-//NOTE: NOT USED YET---------------------------------------
-//  PRIORITY QUEUE BY LINKED LIST IMPLEMENTATION
-//---------------------------------------------------------
-
-#ifdef LINKED_LIST_IMPLEMENTATION
-
-
-struct NODE {
-    Tile* tile;
-    int data, priority, value;
-    struct NODE *next;
-} typedef NODE;
-
-NODE *head = 0, *newNode;
-
-void display() {
-    if (head != 0) {
-        NODE *current = head;
-        printf("List: ");
-        while (current != 0) {
-            printf("%d ", current->priority);
-            current = current->next;
-        }
-        printf("\n");
-    }
-}
-
-void createNode(Tile* tile) {
-    newNode = (NODE *) malloc(sizeof(NODE));
-    newNode->tile = tile;
-    newNode->next = 0;
-    newNode->data = tile->g;
-    newNode->value = tile->h;
-    newNode->priority = tile->f;
-}
-
-void addNode(Tile* tile) {
-    createNode(tile);
-    NODE *current = head;
-
-    if (head == NULL || current->priority < (head)->priority) {
-        newNode->next = head;
-        head = newNode;
-    } else {
-        while (current->next != NULL && current->next->priority < current->priority) {
-            current = current->next;
-        }
-        newNode->next = current->next;
-        current->next = newNode;
-    }
-}
-
-Tile* pop() {
-
-    NODE *rmv = head;
-    head = head->next;
-    Tile *rmvTile = rmv->tile;
-    free(rmv);
-    return rmvTile;
-
-//    NODE *current = head, *prev = 0;
-//    while (current->next != 0) {
-//        prev = current;
-//        current = current->next;
-//    }
-//    printf("\nRemoved Element: %d\n", current->data);
-//    prev->next = 0;
-//
-//    return *current;
-
-}
-
-void clearList(){
-    head = NULL;
-}
-
-#endif
-
 //---------------------------------------------------------
 //  A* IMPLEMENTATION
 //---------------------------------------------------------
 
 #ifdef ASTAR_IMPLEMENTATION
 
-
-// Helper function to calculate the heuristic cost (e.g., Manhattan distance)
-int heuristic(Tile *start, Tile *goal) {
-    return abs(start->row - goal->row) + abs(start->col - goal->col);
+Node* createNode(int x, int y, bool obstacle) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    node->x = x;
+    node->y = y;
+    node->g = 0;
+    node->h = 0;
+    node->f = 0;
+    node->obstacle = obstacle;
+    node->parent = NULL;
+    return node;
 }
 
-void findNeighbours(Tile *tile) {
-    int tC = tile->col;
-    int tR = tile->row;
+int heuristic(Node* a, Node* b) {
+    return abs(a->x - b->x) + abs(a->y - b->y);
+}
 
-    tile->neighbours = malloc(4 * sizeof(Tile));
-    tile->neighbours[0] = tiles[tR - 1][tC];
-    tile->neighbours[1] = tiles[tR + 1][tC];
-    tile->neighbours[2] = tiles[tR][tC - 1];
-    tile->neighbours[3] = tiles[tR][tC + 1];
+bool isValid(int x, int y) {
+    return x >= 0 && x < ROWS && y >= 0 && y < ROWS;
+}
 
-    for (int i = 0; i < 4; i++){
-        tile->neighbours[i].parent = tile;
+bool isTraversable(Node* grid[ROWS][ROWS], int x, int y) {
+    return isValid(x, y) && !grid[x][y]->obstacle;
+}
+
+Node* findMinF(Node* openSet[ROWS][ROWS]) {
+    Node* minNode = NULL;
+    int minF = INT_MAX;
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < ROWS; j++) {
+            Node* current = openSet[i][j];
+            if (current != NULL && current->f < minF) {
+                minF = current->f;
+                minNode = current;
+            }
+        }
+    }
+    return minNode;
+}
+
+void astar(Node* start, Node* goal) {
+
+    Node* grid[ROWS][ROWS];
+
+    for (int i = 0; i < ROWS; ++i) {
+        for (int j = 0; j < ROWS; ++j) {
+            Tile curr = tiles[i][j];
+            grid[i][j] = createNode(curr.row, curr.col, (curr.state == BARRIER));
+        }
     }
 
-}
+    Node* openSet[ROWS][ROWS] = {NULL};
+    Node* closedSet[ROWS][ROWS] = {NULL};
 
-// A* algorithm
-void astar(Tile *start, Tile *goal) {
-
-    Tile* currentTile = start;
+    openSet[start->x][start->y] = start;
 
     while (true) {
+        Node* current = findMinF(openSet);
 
-        if (currentTile == goal) break;
+        if (current == NULL) {
+            printf("No path found.\n");
+            return;
+        }
 
-// Define offsets for the four cardinal directions (up, down, left, right)
-        int dr[] = {-1, 1, 0, 0};
-        int dc[] = {0, 0, -1, 1};
+        if (current->x == goal->x && current->y == goal->y) {
+            // Path found, trace and print it
+            printf("Path found: ");
+            while (current != NULL) {
 
-// Initialize variables to keep track of the lowest f value and the corresponding neighbor
-        Tile *lowestFNeighbor = NULL;
-        int lowestFValue = INT_MAX;
+                Tile* curTile = getTile((Vector2){current->x, current->y});
+                curTile->color = RED;
+
+                printf("(%d, %d) ", current->x, current->y);
+                current = (Node *) current->parent;
+            }
+            printf("\n");
+            return;
+        }
+
+        openSet[current->x][current->y] = NULL;
+        closedSet[current->x][current->y] = current;
+
+        // Generate neighbors
+        int dx[] = {1, -1, 0, 0};
+        int dy[] = {0, 0, 1, -1};
 
         for (int i = 0; i < 4; i++) {
-            int newRow = currentTile->row + dr[i];
-            int newCol = currentTile->col + dc[i];
+            int newX = current->x + dx[i];
+            int newY = current->y + dy[i];
 
-            // Check if the new coordinates are within the grid bounds
-            if (newRow >= 0 && newRow < currentTile->totalRows &&
-                newCol >= 0 && newCol < ROWS) {
-                Tile *neighbor = &tiles[newRow][newCol];
+            if (isTraversable(grid, newX, newY)) {
+                Node* neighbor = grid[newX][newY];
 
-                // Check if the neighbor is not in the closed set (already visited)
-                if (neighbor->state != CLOSED) {
-                    // Calculate the tentative g value for the neighbor
-                    int tentativeG = currentTile->g + 1;  // Assuming a constant cost of 1 for movement
+                if (closedSet[newX][newY] == NULL) {
+                    int tentativeG = current->g + 1;
 
-                    // Check if the neighbor is not in the open set or the new g value is lower
-                    if (neighbor->state != OPEN || tentativeG < neighbor->g) {
-                        // Set the parent of the neighbor to the current tile
-                        neighbor->parent = currentTile;
+                    if (openSet[newX][newY] == NULL || tentativeG < neighbor->g) {
                         neighbor->g = tentativeG;
                         neighbor->h = heuristic(neighbor, goal);
                         neighbor->f = neighbor->g + neighbor->h;
+                        neighbor->parent = (struct Node *) current;
 
-                        // Add the neighbor to the open set (if it's not already there)
-                        if (neighbor->state != OPEN) {
-                            neighbor->state = OPEN;
-                        }
-
-                        // Check if the neighbor has the lowest f value
-                        if (neighbor->f < lowestFValue) {
-                            lowestFValue = neighbor->f;
-                            lowestFNeighbor = neighbor;
+                        if (openSet[newX][newY] == NULL) {
+                            openSet[newX][newY] = neighbor;
                         }
                     }
                 }
             }
         }
-
-// Mark the neighbor with the lowest f value as PATH
-        if (lowestFNeighbor != NULL) {
-            lowestFNeighbor->color = RED;
-        }
-
-        drawGrid();
     }
-
-
-//    for(int i =0; i < ROWS; ++i)
-//        for (int j = 0; j < ROWS; ++j)
-//            findNeighbours(&tiles[i][j]);
-//
-//    Tile closedSet[ROWS*ROWS];
-//    int closedIdx = 0;
-//
-//
-//    NODE* minNeighbour = 0;
-//
-//
-//    for (int i = 0; i < 4; ++i) {
-//
-//    }
-
-//    Tile* curr = start;
-//
-//    while (true){
-//        clearList();
-//        findNeighbours(curr);
-//
-//        if (curr == goal) return;
-//
-//        for (int i = 0; i < 4; ++i) {
-//
-////            if (curr->neighbours[i].parent == curr) continue;
-//
-//            int hn = heuristic(curr, goal);
-//            int gn = 0;
-//            if (curr != start) gn = heuristic(start, curr);
-//
-//            int fn = gn + hn;
-//            curr->neighbours[i].f = fn;
-//            curr->neighbours[i].h = hn;
-//            curr->neighbours[i].g = gn;
-//
-//            addNode(&curr->neighbours[i]);
-//        }
-//
-//        Tile* next = pop();
-//        next->state = PATH;
-//        next->color = RED;
-//        curr = next;
-//      }
-
-
 }
 
 #endif
+
+
 //---------------------------------------------------------
 //  MAIN APP IMPLEMENTATION
 //---------------------------------------------------------
 
-
-
 void algorithm() {
 
-    Tile *end;
-    Tile *start;
-    start = &tiles[(int) startPos.x][(int) startPos.y];
+    Node* start, *end;
 
-    end = &tiles[(int) endPos.x][(int) endPos.y];
+    start = createNode(startPos.x, startPos.y, false);
+    end = createNode(endPos.x, endPos.y, false);
 
     astar(start, end);
 
@@ -438,7 +335,3 @@ int main(void) {
 
     return 0;
 }
-
-
-
-
