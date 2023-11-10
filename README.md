@@ -1,2 +1,4 @@
-# Pathfinding
-A* Pathfinding Implementation
+# Pathfinding Implementation with A* Algorithms
+
+---
+
