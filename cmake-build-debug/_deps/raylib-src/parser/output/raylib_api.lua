@@ -2936,17 +2936,17 @@ return {
         {
           name = "NPATCH_NINE_PATCH",
           value = 0,
-          description = "Npatch layout: 3x3 tiles"
+          description = "Npatch layout: 3x3 GRID_TILES"
         },
         {
           name = "NPATCH_THREE_PATCH_VERTICAL",
           value = 1,
-          description = "Npatch layout: 1x3 tiles"
+          description = "Npatch layout: 1x3 GRID_TILES"
         },
         {
           name = "NPATCH_THREE_PATCH_HORIZONTAL",
           value = 2,
-          description = "Npatch layout: 3x1 tiles"
+          description = "Npatch layout: 3x1 GRID_TILES"
         }
       }
     }

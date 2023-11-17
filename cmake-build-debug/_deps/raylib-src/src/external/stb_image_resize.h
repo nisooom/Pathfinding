@@ -174,7 +174,7 @@
    TODO
       Don't decode all of the image data when only processing a partial tile
       Don't use full-width decode buffers when only processing a partial tile
-      When processing wide images, break processing into tiles so data fits in L1 cache
+      When processing wide images, break processing into GRID_TILES so data fits in L1 cache
       Installable filters?
       Resize that respects alpha test coverage
          (Reference code: FloatImage::alphaTestCoverage and FloatImage::scaleAlphaToCoverage:

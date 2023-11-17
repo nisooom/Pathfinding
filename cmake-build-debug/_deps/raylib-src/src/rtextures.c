@@ -887,7 +887,7 @@ Image GenImageCellular(int width, int height, int tileSize)
 
             float minDistance = 65536.0f; //(float)strtod("Inf", NULL);
 
-            // Check all adjacent tiles
+            // Check all adjacent GRID_TILES
             for (int i = -1; i < 2; i++)
             {
                 if ((tileX + i < 0) || (tileX + i >= seedsPerRow)) continue;

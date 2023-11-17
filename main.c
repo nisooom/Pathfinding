@@ -9,8 +9,19 @@
 //-----------------------------------------------
 
 #define WIDTH 720
+#define WIN_HEIGHT WIDTH
+#define WIN_WIDTH (WIDTH + WIDTH * 0.4)
 #define ROWS 30
 #define FPS 60
+#define GRIDS false
+Color baseTileColor = DARKBLUE;
+Color startColor = WHITE;
+Color goalColor = PINK;
+Color endingColor = GOLD;
+Color gridLineColor = BLACK;
+Color barrierColor = BLACK;
+Color pathColor = RED;
+Color visitedColor = YELLOW;
 
 //-----------------------------------------------
 //  FIXED VARIABLES
@@ -53,8 +64,7 @@ typedef struct {
 //-----------------------------------------------
 
 bool endFlag = false, startFlag = false;
-Tile tiles[ROWS][ROWS];
-Color baseTileColor = DARKBLUE;
+Tile GRID_TILES[ROWS][ROWS];
 Vector2 startPos, endPos;
 
 //-----------------------------------------------
@@ -62,7 +72,7 @@ Vector2 startPos, endPos;
 //-----------------------------------------------
 
 Tile* getTile(Vector2 pos) {
-    return &tiles[(int) pos.x][(int) pos.y];
+    return &GRID_TILES[(int) pos.x][(int) pos.y];
 }
 
 Vector2 getMousePos() {
@@ -96,7 +106,7 @@ void createGrid() {
             newTile.g = 0;
             newTile.h = 0;
 
-            tiles[i][j] = newTile;
+            GRID_TILES[i][j] = newTile;
 //            openSet[i][j] = newTile;
         }
     }
@@ -105,9 +115,9 @@ void createGrid() {
 void drawGrid() {
     int gap = WIDTH / ROWS;
     for (int i = 0; i < ROWS; ++i) {
-        DrawLineV((Vector2) {0, i * gap}, (Vector2) {WIDTH, i * gap}, BLACK);
+        DrawLineV((Vector2) {0, i * gap}, (Vector2) {WIDTH, i * gap}, gridLineColor);
         for (int j = 0; j < ROWS; ++j) {
-            DrawLineV((Vector2) {j * gap, 0}, (Vector2) {j * gap, WIDTH}, BLACK);
+            DrawLineV((Vector2) {j * gap, 0}, (Vector2) {j * gap, WIDTH}, gridLineColor);
         }
     }
 }
@@ -115,13 +125,15 @@ void drawGrid() {
 void drawTiles() {
     for (int i = 0; i < ROWS; ++i) {
         for (int j = 0; j < ROWS; ++j) {
-            Tile currTile = tiles[j][i];
+            Tile currTile = GRID_TILES[j][i];
 
             DrawRectangle(currTile.x, currTile.y, currTile.width, currTile.width, currTile.color);
 
         }
     }
+#if GRIDS
     drawGrid();
+#endif
 }
 
 void changeState(enum STATE state) {
@@ -129,7 +141,7 @@ void changeState(enum STATE state) {
     int row = pos.x;
     int col = pos.y;
 
-    Tile curr = tiles[row][col];
+    Tile curr = GRID_TILES[row][col];
 
     switch (state) {
 
@@ -137,7 +149,7 @@ void changeState(enum STATE state) {
             if (curr.state == DESTINATION) endFlag = !endFlag;
             if (curr.state == START) startFlag = !startFlag;
             curr.state = BARRIER;
-            curr.color = BLACK;
+            curr.color = barrierColor;
             break;
         case UNVISITED:
             if (curr.state == DESTINATION) endFlag = !endFlag;
@@ -149,33 +161,42 @@ void changeState(enum STATE state) {
             startPos.x = row, startPos.y = col;
             startFlag = !startFlag;
             curr.state = START;
-            curr.color = WHITE;
+            curr.color = startColor;
             break;
         case DESTINATION:
             endPos.x = row, endPos.y = col;
             endFlag = !endFlag;
             curr.state = DESTINATION;
-            curr.color = PURPLE;
+            curr.color = goalColor;
             break;
 
     }
-    tiles[row][col] = curr;
+    GRID_TILES[row][col] = curr;
 }
 
 void updateTileColor(Tile* tile, Color col){
 
-    tiles[tile->row][tile->col].color = col;
+    GRID_TILES[tile->row][tile->col].color = col;
 
     BeginDrawing();
     WaitTime(0.01);
     for (int i = 0; i < ROWS; ++i) {
         for (int j = 0; j < ROWS; ++j) {
-            Tile currTile = tiles[j][i];
-
-            DrawRectangle(currTile.x, currTile.y, currTile.width, currTile.width, currTile.color);
+            Tile currTile = GRID_TILES[j][i];
+            Tile* start_tmp = getTile(startPos);
+            Tile* end_tmp = getTile(startPos);
+            if (start_tmp == &currTile){
+                DrawRectangle(currTile.x, currTile.y, currTile.width, currTile.width, startColor);
+            }else if(end_tmp == &currTile){
+                DrawRectangle(currTile.x, currTile.y, currTile.width, currTile.width, endingColor);
+            }else{
+                DrawRectangle(currTile.x, currTile.y, currTile.width, currTile.width, currTile.color);
+            }
         }
     }
+#if GRIDS
     drawGrid();
+#endif
     EndDrawing();
 
 //    drawTiles();
@@ -228,13 +249,13 @@ Node* findMinF(Node* openSet[ROWS][ROWS]) {
     return minNode;
 }
 
-void astar(Node* start, Node* goal) {
+void aStar(Node* start, Node* goal) {
 
     Node* grid[ROWS][ROWS];
 
     for (int i = 0; i < ROWS; ++i) {
         for (int j = 0; j < ROWS; ++j) {
-            Tile curr = tiles[i][j];
+            Tile curr = GRID_TILES[i][j];
             grid[i][j] = createNode(curr.row, curr.col, (curr.state == BARRIER));
         }
     }
@@ -246,7 +267,6 @@ void astar(Node* start, Node* goal) {
 
     while (true) {
 
-        WaitTime(0.1);
 
         Node* current = findMinF(openSet);
 
@@ -262,8 +282,7 @@ void astar(Node* start, Node* goal) {
 
                 Tile* curTile = getTile((Vector2){current->x, current->y});
 
-
-                updateTileColor(curTile, RED);
+                if (current != start || current != goal) updateTileColor(curTile, pathColor);
                 printf("(%d, %d) ", current->x, current->y);
                 current = (Node *) current->parent;
             }
@@ -296,7 +315,7 @@ void astar(Node* start, Node* goal) {
 
                         Tile* curTile = getTile((Vector2){current->x, current->y});
 
-                        updateTileColor(curTile, YELLOW);
+                        if (current != start || current != goal) updateTileColor(curTile, visitedColor);
 
 
                         if (openSet[newX][newY] == NULL) {
@@ -318,29 +337,40 @@ void astar(Node* start, Node* goal) {
 
 void algorithm() {
 
-    astar(createNode(startPos.x, startPos.y, false), createNode(endPos.x, endPos.y, false));
+    aStar(createNode(startPos.x, startPos.y, false), createNode(endPos.x, endPos.y, false));
+
+    updateTileColor(getTile(startPos), endingColor);
+    updateTileColor(getTile(endPos), endingColor);
+}
+
+void checkEvents(){
+
+    if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT) || IsKeyDown(KEY_B)) changeState(BARRIER);
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) changeState(UNVISITED);
+
+    if ((!startFlag) && (IsKeyPressed(KEY_S))) changeState(START);
+    if ((!endFlag) && (IsKeyPressed(KEY_F))) changeState(DESTINATION);
+
+    if (IsKeyPressed(KEY_R)) createGrid();
+    if (IsKeyPressed(KEY_SPACE)) algorithm();
+
 
 }
 
-int main(void) {
+void mainEventLoop(){
 
-    InitWindow(WIDTH, WIDTH, "A* Pathfinding Algorithm");
+    InitWindow(WIN_WIDTH, WIN_HEIGHT, "A* Pathfinding Algorithm");
     SetTargetFPS(FPS);
 
     createGrid();
+
     while (!WindowShouldClose()){
-
         BeginDrawing();
+
+
+
         drawTiles();
-
-        if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT) || IsKeyDown(KEY_B)) changeState(BARRIER);
-        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) changeState(UNVISITED);
-
-        if ((!startFlag) && (IsKeyPressed(KEY_S))) changeState(START);
-        if ((!endFlag) && (IsKeyPressed(KEY_F))) changeState(DESTINATION);
-
-        if (IsKeyPressed(KEY_R)) createGrid();
-        if (IsKeyPressed(KEY_SPACE)) algorithm();
+        checkEvents();
 
         ClearBackground(RAYWHITE);
 
@@ -348,6 +378,11 @@ int main(void) {
     }
 
     CloseWindow();
+}
+
+int main(void) {
+
+    mainEventLoop();
 
     return 0;
 }
