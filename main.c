@@ -54,7 +54,7 @@ typedef struct {
 
 bool endFlag = false, startFlag = false;
 Tile tiles[ROWS][ROWS];
-Color baseTileColor;
+Color baseTileColor = DARKBLUE;
 Vector2 startPos, endPos;
 
 //-----------------------------------------------
@@ -162,6 +162,27 @@ void changeState(enum STATE state) {
     tiles[row][col] = curr;
 }
 
+void updateTileColor(Tile* tile, Color col){
+
+    tiles[tile->row][tile->col].color = col;
+
+    BeginDrawing();
+    WaitTime(0.01);
+    for (int i = 0; i < ROWS; ++i) {
+        for (int j = 0; j < ROWS; ++j) {
+            Tile currTile = tiles[j][i];
+
+            DrawRectangle(currTile.x, currTile.y, currTile.width, currTile.width, currTile.color);
+        }
+    }
+    drawGrid();
+    EndDrawing();
+
+//    drawTiles();
+
+}
+
+
 //---------------------------------------------------------
 //  A* IMPLEMENTATION
 //---------------------------------------------------------
@@ -224,6 +245,9 @@ void astar(Node* start, Node* goal) {
     openSet[start->x][start->y] = start;
 
     while (true) {
+
+        WaitTime(0.1);
+
         Node* current = findMinF(openSet);
 
         if (current == NULL) {
@@ -237,8 +261,9 @@ void astar(Node* start, Node* goal) {
             while (current != NULL) {
 
                 Tile* curTile = getTile((Vector2){current->x, current->y});
-                curTile->color = RED;
 
+
+                updateTileColor(curTile, RED);
                 printf("(%d, %d) ", current->x, current->y);
                 current = (Node *) current->parent;
             }
@@ -269,6 +294,11 @@ void astar(Node* start, Node* goal) {
                         neighbor->f = neighbor->g + neighbor->h;
                         neighbor->parent = (struct Node *) current;
 
+                        Tile* curTile = getTile((Vector2){current->x, current->y});
+
+                        updateTileColor(curTile, YELLOW);
+
+
                         if (openSet[newX][newY] == NULL) {
                             openSet[newX][newY] = neighbor;
                         }
@@ -297,7 +327,6 @@ int main(void) {
     InitWindow(WIDTH, WIDTH, "A* Pathfinding Algorithm");
     SetTargetFPS(FPS);
 
-    baseTileColor = GetColor(232020);
     createGrid();
     while (!WindowShouldClose()){
 

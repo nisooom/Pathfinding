@@ -6,7 +6,7 @@ method=url
 command=C:/Users/nishu/AppData/Local/Programs/CLion/bin/cmake/win/x64/bin/cmake.exe;-P;C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp/download-raylib-populate.cmake;COMMAND;C:/Users/nishu/AppData/Local/Programs/CLion/bin/cmake/win/x64/bin/cmake.exe;-P;C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp/verify-raylib-populate.cmake;COMMAND;C:/Users/nishu/AppData/Local/Programs/CLion/bin/cmake/win/x64/bin/cmake.exe;-P;C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp/extract-raylib-populate.cmake
 source_dir=C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps/raylib-src
 work_dir=C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps
-url(s)=https://github.com/raysan5/raylib/archive/refs/tags/4.2.0.tar.gz
+url(s)=https://github.com/raysan5/raylib/archive/refs/tags/4.5.0.tar.gz
 hash=
 no_extract=
 

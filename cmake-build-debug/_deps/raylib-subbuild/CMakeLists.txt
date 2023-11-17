@@ -13,7 +13,7 @@ project(raylib-populate NONE)
 
 include(ExternalProject)
 ExternalProject_Add(raylib-populate
-                     "UPDATE_DISCONNECTED" "False" "DOWNLOAD_EXTRACT_TIMESTAMP" "TRUE" "URL" "https://github.com/raysan5/raylib/archive/refs/tags/4.2.0.tar.gz"
+                     "UPDATE_DISCONNECTED" "False" "DOWNLOAD_EXTRACT_TIMESTAMP" "TRUE" "URL" "https://github.com/raysan5/raylib/archive/refs/tags/4.5.0.tar.gz"
                     SOURCE_DIR          "C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps/raylib-src"
                     BINARY_DIR          "C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps/raylib-build"
                     CONFIGURE_COMMAND   ""

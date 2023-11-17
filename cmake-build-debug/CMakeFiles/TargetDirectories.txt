@@ -33,6 +33,7 @@ C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps/raylib-build/raylib/e
 C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps/raylib-build/raylib/external/glfw/CMakeFiles/install/local.dir
 C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps/raylib-build/raylib/external/glfw/CMakeFiles/install/strip.dir
 C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir
+C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir
 C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/package.dir
 C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/package_source.dir
 C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/edit_cache.dir
