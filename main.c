@@ -13,8 +13,8 @@
 #define WIN_WIDTH (WIDTH + WIDTH * 0.4)
 #define ROWS (int)(WIDTH/20)
 #define FPS 120
-#define GRIDS false
-#define ALLOW_DIAGONALS false
+bool ALLOW_GRIDS = true;
+bool ALLOW_DIAGONALS = true;
 
 // Base Colors
 
@@ -126,9 +126,9 @@ void drawTiles() {
 
         }
     }
-#if GRIDS
-    drawGrid();
-#endif
+
+    if (ALLOW_GRIDS) drawGrid();
+
 }
 
 void changeState(enum STATE state) {
@@ -189,6 +189,7 @@ void updateTileColor(Tile* tile, Color col){
         }
     }
 #if GRIDS
+    if ()
     drawGrid();
 #endif
     EndDrawing();
@@ -222,12 +223,13 @@ Node* createNode(int x, int y, bool obstacle) {
 }
 
 int heuristic(Node* a, Node* b) {
-#if ALLOW_DIAGONALS
+
     int dx = abs(a->x - b->x);
     int dy = abs(a->y - b->y);
+#if ALLOW_DIAGONALS
     return  (int) ((dx + dy) + (1.414 - 2 * 1) * MIN(dx, dy));
 #else
-    return abs(a->x - b->x) + abs(a->y - b->y);
+    return dx + dy;
 #endif
 }
 
