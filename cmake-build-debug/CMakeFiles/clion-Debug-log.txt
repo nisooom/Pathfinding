@@ -14,34 +14,10 @@ Call Stack (most recent call first):
 This warning is for project developers.  Use -Wno-dev to suppress it.
 
 -- Populating raylib
--- Configuring done (0.2s)
+-- Configuring done (0.1s)
 -- Generating done (0.0s)
 -- Build files have been written to: C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps/raylib-subbuild
-[0/8] Performing download step (download, verify and extract) for 'raylib-populate'
--- File already exists but no hash specified (use URL_HASH):
-  file='C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/4.5.0.tar.gz'
-Old file will be removed and new file downloaded from URL.
--- Downloading...
-   dst='C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/4.5.0.tar.gz'
-   timeout='none'
-   inactivity timeout='none'
--- Using src='https://github.com/raysan5/raylib/archive/refs/tags/4.5.0.tar.gz'
--- Downloading... done
--- extracting...
-     src='C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/4.5.0.tar.gz'
-     dst='C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug/_deps/raylib-src'
--- extracting... [tar xfz]
--- extracting... [analysis]
--- extracting... [rename]
--- extracting... [clean up]
--- extracting... done
-[1/8] No update step for 'raylib-populate'
-[2/8] No patch step for 'raylib-populate'
-[4/8] No configure step for 'raylib-populate'
-[5/8] No build step for 'raylib-populate'
-[6/8] No install step for 'raylib-populate'
-[7/8] No test step for 'raylib-populate'
-[8/8] Completed 'raylib-populate'
+ninja: no work to do.
 -- Testing if -Werror=pointer-arith can be used -- compiles
 -- Testing if -Werror=implicit-function-declaration can be used -- compiles
 -- Testing if -fno-strict-aliasing can be used -- compiles
@@ -53,6 +29,6 @@ Old file will be removed and new file downloaded from URL.
 -- Compiling with the flags:
 --   PLATFORM=PLATFORM_DESKTOP
 --   GRAPHICS=GRAPHICS_API_OPENGL_33
--- Configuring done (28.2s)
--- Generating done (0.0s)
+-- Configuring done (0.8s)
+-- Generating done (0.1s)
 -- Build files have been written to: C:/Users/nishu/Codes/C/Pathfinding/cmake-build-debug

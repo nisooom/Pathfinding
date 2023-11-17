@@ -8,27 +8,31 @@
 //  CHANGEABLE VARIABLES
 //-----------------------------------------------
 
-#define WIDTH 720
+#define WIDTH 1024
 #define WIN_HEIGHT WIDTH
 #define WIN_WIDTH (WIDTH + WIDTH * 0.4)
-#define ROWS 30
-#define FPS 60
+#define ROWS (int)(WIDTH/20)
+#define FPS 120
 #define GRIDS false
+#define ALLOW_DIAGONALS false
+
+// Base Colors
+
 Color baseTileColor = DARKBLUE;
 Color startColor = WHITE;
 Color goalColor = PINK;
-Color endingColor = GOLD;
+Color endingColor = WHITE;
 Color gridLineColor = BLACK;
 Color barrierColor = BLACK;
 Color pathColor = RED;
-Color visitedColor = YELLOW;
+Color visitedColor = ORANGE;
 
 //-----------------------------------------------
 //  FIXED VARIABLES
 //-----------------------------------------------
 
 #define GAP (WIDTH/ROWS)
-#define ASTAR_IMPLEMENTATION
+#define A_STAR_IMPLEMENTATION
 
 //-----------------------------------------------
 //  STRUCTS AND ENUMS
@@ -45,19 +49,11 @@ typedef struct Tile {
     int row, col;
     int x, y, width;
     Color color;
-    struct Tile *neighbours;
-    int totalRows;
     enum STATE state;
     struct Tile *parent;
     int g, h, f;
 } Tile;
 
-typedef struct {
-    int x, y;
-    int g, h, f;
-    bool obstacle;
-    struct Node* parent;
-} Node;
 
 //-----------------------------------------------
 //  GLOBAL VARIABLES
@@ -70,6 +66,8 @@ Vector2 startPos, endPos;
 //-----------------------------------------------
 //  Helper Functions
 //-----------------------------------------------
+
+#define MIN(x, y) (x) > (y) ? (y): (x)
 
 Tile* getTile(Vector2 pos) {
     return &GRID_TILES[(int) pos.x][(int) pos.y];
@@ -95,19 +93,16 @@ void createGrid() {
             newTile.row = i;
             newTile.col = j;
             newTile.width = gap;
-            newTile.totalRows = ROWS;
             newTile.x = newTile.row * newTile.width;
             newTile.y = newTile.col * newTile.width;
             newTile.color = baseTileColor;
             newTile.state = UNVISITED;
-            newTile.totalRows = ROWS;
             newTile.parent = NULL;
             newTile.f = 0;
             newTile.g = 0;
             newTile.h = 0;
 
             GRID_TILES[i][j] = newTile;
-//            openSet[i][j] = newTile;
         }
     }
 }
@@ -115,9 +110,9 @@ void createGrid() {
 void drawGrid() {
     int gap = WIDTH / ROWS;
     for (int i = 0; i < ROWS; ++i) {
-        DrawLineV((Vector2) {0, i * gap}, (Vector2) {WIDTH, i * gap}, gridLineColor);
+        DrawLineV((Vector2) {0, (float)i *(float) gap}, (Vector2) {(float)WIDTH, (float)i * (float)gap}, gridLineColor);
         for (int j = 0; j < ROWS; ++j) {
-            DrawLineV((Vector2) {j * gap, 0}, (Vector2) {j * gap, WIDTH}, gridLineColor);
+            DrawLineV((Vector2) {(float)j *(float) gap,(float) 0}, (Vector2) {(float)j *(float) gap, (float)WIDTH}, gridLineColor);
         }
     }
 }
@@ -138,8 +133,8 @@ void drawTiles() {
 
 void changeState(enum STATE state) {
     Vector2 pos = getMousePos();
-    int row = pos.x;
-    int col = pos.y;
+    int row = (int) pos.x;
+    int col = (int) pos.y;
 
     Tile curr = GRID_TILES[row][col];
 
@@ -158,13 +153,13 @@ void changeState(enum STATE state) {
             curr.color = baseTileColor;
             break;
         case START:
-            startPos.x = row, startPos.y = col;
+            startPos.x = (float)row, startPos.y = (float)col;
             startFlag = !startFlag;
             curr.state = START;
             curr.color = startColor;
             break;
         case DESTINATION:
-            endPos.x = row, endPos.y = col;
+            endPos.x = (float)row, endPos.y = (float)col;
             endFlag = !endFlag;
             curr.state = DESTINATION;
             curr.color = goalColor;
@@ -179,7 +174,6 @@ void updateTileColor(Tile* tile, Color col){
     GRID_TILES[tile->row][tile->col].color = col;
 
     BeginDrawing();
-    WaitTime(0.01);
     for (int i = 0; i < ROWS; ++i) {
         for (int j = 0; j < ROWS; ++j) {
             Tile currTile = GRID_TILES[j][i];
@@ -199,8 +193,6 @@ void updateTileColor(Tile* tile, Color col){
 #endif
     EndDrawing();
 
-//    drawTiles();
-
 }
 
 
@@ -208,7 +200,14 @@ void updateTileColor(Tile* tile, Color col){
 //  A* IMPLEMENTATION
 //---------------------------------------------------------
 
-#ifdef ASTAR_IMPLEMENTATION
+#ifdef A_STAR_IMPLEMENTATION
+
+typedef struct {
+    int x, y;
+    int g, h, f;
+    bool obstacle;
+    struct Node* parent;
+} Node;
 
 Node* createNode(int x, int y, bool obstacle) {
     Node* node = (Node*)malloc(sizeof(Node));
@@ -223,7 +222,13 @@ Node* createNode(int x, int y, bool obstacle) {
 }
 
 int heuristic(Node* a, Node* b) {
+#if ALLOW_DIAGONALS
+    int dx = abs(a->x - b->x);
+    int dy = abs(a->y - b->y);
+    return  (int) ((dx + dy) + (1.414 - 2 * 1) * MIN(dx, dy));
+#else
     return abs(a->x - b->x) + abs(a->y - b->y);
+#endif
 }
 
 bool isValid(int x, int y) {
@@ -280,7 +285,7 @@ void aStar(Node* start, Node* goal) {
             printf("Path found: ");
             while (current != NULL) {
 
-                Tile* curTile = getTile((Vector2){current->x, current->y});
+                Tile* curTile = getTile((Vector2){(float)current->x,(float) current->y});
 
                 if (current != start || current != goal) updateTileColor(curTile, pathColor);
                 printf("(%d, %d) ", current->x, current->y);
@@ -294,10 +299,15 @@ void aStar(Node* start, Node* goal) {
         closedSet[current->x][current->y] = current;
 
         // Generate neighbors
+#if ALLOW_DIAGONALS
+        int dx[] = {1, -1, 0, 0, 1, 1, -1, -1};
+        int dy[] = {0, 0, 1, -1, 1, -1, 1, -1};
+#else
         int dx[] = {1, -1, 0, 0};
         int dy[] = {0, 0, 1, -1};
+#endif
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < ((ALLOW_DIAGONALS) ? 8: 4); i++) {
             int newX = current->x + dx[i];
             int newY = current->y + dy[i];
 
@@ -313,7 +323,7 @@ void aStar(Node* start, Node* goal) {
                         neighbor->f = neighbor->g + neighbor->h;
                         neighbor->parent = (struct Node *) current;
 
-                        Tile* curTile = getTile((Vector2){current->x, current->y});
+                        Tile* curTile = getTile((Vector2){(float)current->x, (float)current->y});
 
                         if (current != start || current != goal) updateTileColor(curTile, visitedColor);
 
@@ -337,7 +347,7 @@ void aStar(Node* start, Node* goal) {
 
 void algorithm() {
 
-    aStar(createNode(startPos.x, startPos.y, false), createNode(endPos.x, endPos.y, false));
+    aStar(createNode((int)startPos.x,(int) startPos.y, false), createNode((int)endPos.x, (int)endPos.y, false));
 
     updateTileColor(getTile(startPos), endingColor);
     updateTileColor(getTile(endPos), endingColor);
@@ -366,8 +376,6 @@ void mainEventLoop(){
 
     while (!WindowShouldClose()){
         BeginDrawing();
-
-
 
         drawTiles();
         checkEvents();

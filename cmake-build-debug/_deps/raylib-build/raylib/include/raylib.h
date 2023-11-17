@@ -897,9 +897,9 @@ typedef enum {
 
 // N-patch layout
 typedef enum {
-    NPATCH_NINE_PATCH = 0,          // Npatch layout: 3x3 tiles
-    NPATCH_THREE_PATCH_VERTICAL,    // Npatch layout: 1x3 tiles
-    NPATCH_THREE_PATCH_HORIZONTAL   // Npatch layout: 3x1 tiles
+    NPATCH_NINE_PATCH = 0,          // Npatch layout: 3x3 GRID_TILES
+    NPATCH_THREE_PATCH_VERTICAL,    // Npatch layout: 1x3 GRID_TILES
+    NPATCH_THREE_PATCH_HORIZONTAL   // Npatch layout: 3x1 GRID_TILES
 } NPatchLayout;
 
 // Callbacks to hook some internal functions
