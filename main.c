@@ -149,13 +149,13 @@ void changeState(enum STATE state) {
             startPos.x = row, startPos.y = col;
             startFlag = !startFlag;
             curr.state = START;
-            curr.color = DARKGRAY;
+            curr.color = WHITE;
             break;
         case DESTINATION:
             endPos.x = row, endPos.y = col;
             endFlag = !endFlag;
             curr.state = DESTINATION;
-            curr.color = BLUE;
+            curr.color = PURPLE;
             break;
 
     }
