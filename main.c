@@ -1,12 +1,12 @@
 //-----------------------------------------------
 // INCLUDES
 //-----------------------------------------------
+#define RAYGUI_IMPLEMENTATION
 #include <stdio.h>
 #include "raylib.h"
 #include "stdbool.h"
 #include "math.h"
 #include <stdlib.h>
-#define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 
 //-----------------------------------------------
@@ -15,9 +15,9 @@
 
 #define WIDTH 720
 #define WIN_HEIGHT WIDTH
-#define WIN_WIDTH (WIDTH + WIDTH * 0.4)
+#define WIN_WIDTH (WIDTH + WIDTH * 0.3)
 #define ROWS (int)(WIDTH/20)
-#define FPS 120
+#define FPS 60
 bool ALLOW_GRIDS = true;
 bool ALLOW_DIAGONALS = true;
 
@@ -373,15 +373,9 @@ void aStar(Node *start, Node *goal) {
 
 #endif
 
-//---------------------------------------------------------
-//  GUI IMPLEMENTATION
-//---------------------------------------------------------
-
-
-
 
 //---------------------------------------------------------
-//  MAIN APP IMPLEMENTATION
+//  MAIN APP IMPLEMENTATION & GUI
 //---------------------------------------------------------
 
 void algorithm() {
@@ -396,25 +390,41 @@ void algorithm() {
 }
 
 void createButtons() {
+
+
+    (ALLOW_GRIDS) ? GuiSetState(STATE_FOCUSED) : GuiSetState(STATE_NORMAL);
     if (GuiButton((Rectangle){ WIN_WIDTH * 0.8, WIN_HEIGHT * 0.1, 120, 40 }, "Toggle Grid")) {
         ALLOW_GRIDS = !ALLOW_GRIDS;
     }
 
+    (ALLOW_DIAGONALS) ? GuiSetState(STATE_FOCUSED) : GuiSetState(STATE_NORMAL);
     if (GuiButton((Rectangle){ WIN_WIDTH * 0.8, WIN_HEIGHT * 0.2, 160, 40 }, "Toggle Diagonals")) {
         ALLOW_DIAGONALS = !ALLOW_DIAGONALS;
     }
 
+    GuiSetState(STATE_NORMAL);
     if (GuiButton((Rectangle){ WIN_WIDTH * 0.8, WIN_HEIGHT * 0.3, 100, 40 }, "Run Algorithm")) {
         algorithm();
     }
-
+    GuiSetState(STATE_NORMAL);
     if (GuiButton((Rectangle){ WIN_WIDTH * 0.8, WIN_HEIGHT * 0.4, 100, 40 }, "Reset")) {
         createGrid();
     }
-
+    GuiSetState(STATE_NORMAL);
     if (GuiButton((Rectangle){ WIN_WIDTH * 0.8, WIN_HEIGHT * 0.5, 100, 40 }, "Clear")) {
         clearGrid();
     }
+
+    int fontSize = 20;
+
+    DrawText("For Walls:", WIN_WIDTH * 0.8, WIN_HEIGHT * 0.6, fontSize, BLACK);
+    DrawText("B or Right Click", WIN_WIDTH * 0.8, WIN_HEIGHT * 0.64, fontSize, BLACK);
+
+    DrawText("For Start:", WIN_WIDTH * 0.8, WIN_HEIGHT * 0.7, fontSize, BLACK);
+    DrawText("S", WIN_WIDTH * 0.8, WIN_HEIGHT * 0.74, fontSize, BLACK);
+
+    DrawText("For Goal:", WIN_WIDTH * 0.8, WIN_HEIGHT * 0.8, fontSize, BLACK);
+    DrawText("F", WIN_WIDTH * 0.8, WIN_HEIGHT * 0.84, fontSize, BLACK);
 
 }
 
@@ -449,7 +459,6 @@ void mainEventLoop() {
 
         drawTiles();
         createButtons();
-
         checkEvents();
 
         ClearBackground(RAYWHITE);
