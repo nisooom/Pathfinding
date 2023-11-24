@@ -1,6 +1,6 @@
 Pathfinding Algorithm Implementation with A*
 ---
-Using [Raylib](https://www.raylib.com/) and RayGui, I have implemented a basic A* implementation, 
+Using [Raylib](https://www.raylib.com/) and [RayGui](https://www.raylib.com/), I have implemented a basic A* implementation, 
 <br>
 It allows the user to choose whether to use diagonals or not in the calculation of the area.
 
@@ -10,7 +10,6 @@ User can also change the variables and colors used in the implementation by chan
 
 
 ```c
-// Lines 13-35
 #define WIDTH 720
 #define WIN_HEIGHT WIDTH
 #define WIN_WIDTH (WIDTH + WIDTH * 0.3)
@@ -27,9 +26,16 @@ Color pathColor = RED;
 Color visitedColor = ORANGE;
 
 ```
+<br>
 
-For now,
+To run the Code in Windows
+> 1. Clone the Repository
+> 2. Open Terminal
+> 3. ```build.bat```
 
-running the code, you will require CMake as it has external dependencies.
+To run the Code on Bash
+> 1. Clone the repository
+> 2. Open terminal
+> 3. ```chmod +x build.sh```
+> 4. ```build.sh```
 
-Next Release will have all libraries added to the include folder for now only RayGui is added

@@ -4,11 +4,7 @@
 
 #ifndef PATHFINDING_A_STAR_H
 #define PATHFINDING_A_STAR_H
-#include "stdbool.h"
-#include "stdlib.h"
-#include "raylib.h"
 #include "main.h"
-#include "stdio.h"
 
 typedef struct {
     int x, y;

@@ -1,10 +1,11 @@
-//
-// Created by nishu on 24-11-2023.
-//
 
 #ifndef PATHFINDING_MAIN_H
 #define PATHFINDING_MAIN_H
 #include "raylib.h"
+#include "stdbool.h"
+#include "stdlib.h"
+#include "raylib.h"
+#include "stdio.h"
 
 
 #define WIDTH 720
@@ -14,7 +15,6 @@
 #define FPS 60
 
 
-// Base Colors
 
 Color baseTileColor = DARKBLUE;
 Color startColor = WHITE;
@@ -25,18 +25,11 @@ Color barrierColor = BLACK;
 Color pathColor = RED;
 Color visitedColor = ORANGE;
 
-//-----------------------------------------------
-//  FIXED VARIABLES
-//-----------------------------------------------
 
 #define GAP (int)(WIDTH/(int)ROWS)
 #define A_STAR_IMPLEMENTATION
 bool ALLOW_GRIDS = true;
 bool ALLOW_DIAGONALS = true;
-
-//-----------------------------------------------
-//  STRUCTS AND ENUMS
-//-----------------------------------------------
 
 enum STATE {
     BARRIER,
@@ -56,17 +49,9 @@ typedef struct Tile {
 } Tile;
 
 
-//-----------------------------------------------
-//  GLOBAL VARIABLES
-//-----------------------------------------------
-
 bool endFlag = false, startFlag = false;
 Tile GRID_TILES[ROWS][ROWS];
 Vector2 startPos, endPos;
-
-//-----------------------------------------------
-//  Helper Functions
-//-----------------------------------------------
 
 #define MIN(x, y) (x) > (y) ? (y): (x)
 
