@@ -18,8 +18,6 @@
 #define WIN_WIDTH (WIDTH + WIDTH * 0.3)
 #define ROWS (int)(WIDTH/20)
 #define FPS 60
-bool ALLOW_GRIDS = true;
-bool ALLOW_DIAGONALS = true;
 
 
 // Base Colors
@@ -39,6 +37,8 @@ Color visitedColor = ORANGE;
 
 #define GAP (int)(WIDTH/(int)ROWS)
 #define A_STAR_IMPLEMENTATION
+bool ALLOW_GRIDS = true;
+bool ALLOW_DIAGONALS = true;
 
 //-----------------------------------------------
 //  STRUCTS AND ENUMS
