@@ -4,8 +4,6 @@
 
 #ifndef PATHFINDING_A_STAR_H
 #define PATHFINDING_A_STAR_H
-#define RAYGUI_IMPLEMENTATION
-#include "include/raygui.h"
 #include "main.h"
 
 typedef struct {
@@ -84,6 +82,7 @@ void aStar(Node *start, Node *goal) {
 
         if (current == NULL) {
             printf("No path found.\n");
+            error = !error;
             return;
         }
 
@@ -182,8 +181,16 @@ void createButtons() {
     if (GuiButton((Rectangle){ WIN_WIDTH * 0.8, WIN_HEIGHT * 0.5, 100, 40 }, "Clear")) {
         clearGrid();
     }
-
     int fontSize = 20;
+
+    Rectangle errorRect = (Rectangle){ WIN_WIDTH * 0.4, WIN_HEIGHT * 0.4, 100, 75 };
+
+    if (error && GuiButton(errorRect, "NO PATH FOUND")){
+
+        error = !error;
+        clearGrid();
+    }
+
 
     DrawText("For Walls:", WIN_WIDTH * 0.8, WIN_HEIGHT * 0.6, fontSize, BLACK);
     DrawText("B or Right Click", WIN_WIDTH * 0.8, WIN_HEIGHT * 0.64, fontSize, BLACK);

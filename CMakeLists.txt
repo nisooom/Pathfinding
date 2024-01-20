@@ -27,6 +27,7 @@ endif()
 add_executable(${PROJECT_NAME} main.c include/raygui.h
         include/a_star.h
         include/main.h
+        include/values.h
 
 )
 #set(raylib_VERBOSE 1)

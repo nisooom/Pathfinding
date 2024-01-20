@@ -1,52 +1,10 @@
 
 #ifndef PATHFINDING_MAIN_H
 #define PATHFINDING_MAIN_H
-#include "raylib.h"
-#include "stdbool.h"
-#include "stdlib.h"
-#include "raylib.h"
-#include "stdio.h"
-
-
-#define WIDTH 720
-#define WIN_HEIGHT WIDTH
-#define WIN_WIDTH (WIDTH + WIDTH * 0.3)
-#define ROWS (int)(WIDTH/20)
-#define FPS 60
+#include "values.h"
 
 
 
-Color baseTileColor = DARKBLUE;
-Color startColor = WHITE;
-Color goalColor = PINK;
-Color endingColor = WHITE;
-Color gridLineColor = BLACK;
-Color barrierColor = BLACK;
-Color pathColor = RED;
-Color visitedColor = ORANGE;
-
-
-#define GAP (int)(WIDTH/(int)ROWS)
-#define A_STAR_IMPLEMENTATION
-bool ALLOW_GRIDS = true;
-bool ALLOW_DIAGONALS = true;
-
-enum STATE {
-    BARRIER,
-    START,
-    DESTINATION,
-    UNVISITED,
-    PATH
-};
-
-typedef struct Tile {
-    int row, col;
-    int x, y, width;
-    Color color;
-    enum STATE state;
-    struct Tile *parent;
-    int g, h, f;
-} Tile;
 
 
 bool endFlag = false, startFlag = false;
